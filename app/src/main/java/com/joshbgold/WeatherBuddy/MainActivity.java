@@ -27,11 +27,13 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -45,7 +47,7 @@ public class MainActivity extends Activity {
     public static final String DAILY_FORECAST = "DAILY_FORECAST";
 
     private Forecast mForecast;
-
+    private HashMap<String, String> city;
     private Current mCurrentWeather;
     private Day[] mDailyWeather;
     private double longitude;
@@ -140,6 +142,8 @@ public class MainActivity extends Activity {
 
         //refreshes the current forecast
         mRefreshImageView.setOnClickListener(new View.OnClickListener() {
+            boolean isValidCity = true;  //used to tell if this is a location worth saving
+
             @Override
             public void onClick(View v) {
                 userInputCity = mLocationLabel.getText().toString().toLowerCase();
@@ -154,8 +158,17 @@ public class MainActivity extends Activity {
                     Toast.makeText(MainActivity.this, "Could not find this city name.  Make sure you have a network connection, " +
                             "and verify spelling of the city name.", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
+                    isValidCity = false;
                 }
-                savePrefs("userInputCity", userInputCity);
+
+               if (isValidCity) {
+                   WordUtils.capitalize(userInputCity);
+                   //store the city in hashmap for later use, and store the city in preferences
+                   city = new HashMap<>();
+                   city.put("location", userInputCity);
+                   savePrefs("userInputCity", userInputCity);
+               }
+
             }
         });
 

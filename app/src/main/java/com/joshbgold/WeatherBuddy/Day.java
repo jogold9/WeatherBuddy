@@ -12,7 +12,6 @@ public class Day implements Parcelable{
     private String mSummary;
     private String mIcon;
     private String mTimeZone;
-
     private double mTemperatureMax;
     private double mTemperatureMin;
     private long mSunrise;
@@ -74,8 +73,7 @@ public class Day implements Parcelable{
         SimpleDateFormat formatter = new SimpleDateFormat("EEEE");
         formatter.setTimeZone(TimeZone.getTimeZone(mTimeZone));
         Date dateTime = new Date(mTime * 1000);
-        String dayOfTheWeek = formatter.format(dateTime);
-        return dayOfTheWeek;
+        return formatter.format(dateTime);
     }
 
     @Override
