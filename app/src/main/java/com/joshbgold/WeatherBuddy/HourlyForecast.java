@@ -78,7 +78,7 @@ public class HourlyForecast extends AppCompatActivity {
                 mLayout.setBackgroundResource(R.drawable.cloudy_night_background);
                 break;
             default:
-                mLayout.setBackgroundResource(R.drawable.cloudy);
+                mLayout.setBackgroundResource(R.drawable.cloudy_background);
                 break;
         }
     }
@@ -86,7 +86,6 @@ public class HourlyForecast extends AppCompatActivity {
     //get prefs
     private String LoadPreferences(String key, String value){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String data = sharedPreferences.getString(key, value);
-        return data;
+        return sharedPreferences.getString(key, value);
     }
 }

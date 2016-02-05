@@ -13,6 +13,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -33,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,8 +50,9 @@ public class MainActivity extends Activity {
     public static final String HOURLY_FORECAST = "HOURLY_FORECAST";
     public static final String DAILY_FORECAST = "DAILY_FORECAST";
 
-    private Forecast mForecast;
     private HashMap<String, String> city;
+    private ArrayList<HashMap<String, String>> citiesList = new ArrayList<>();
+    private Forecast mForecast;
     private Current mCurrentWeather;
     private Day[] mDailyWeather;
     private double longitude;
@@ -166,6 +171,7 @@ public class MainActivity extends Activity {
                    //store the city in hashmap for later use, and store the city in preferences
                    city = new HashMap<>();
                    city.put("location", userInputCity);
+                   citiesList.add(city);
                    savePrefs("userInputCity", userInputCity);
                }
 
@@ -490,6 +496,28 @@ public class MainActivity extends Activity {
             Address address = addressList.get(0);
             cityLatitude = address.getLatitude();
             cityLongitude = address.getLongitude();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_saved_cities:
+                //launch settings activity
+                Intent intent = new Intent(this, CityChooserActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
