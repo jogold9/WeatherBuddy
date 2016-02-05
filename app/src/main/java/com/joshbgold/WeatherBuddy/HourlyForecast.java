@@ -1,11 +1,11 @@
 package com.joshbgold.WeatherBuddy;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.RelativeLayout;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class HourlyForecast extends AppCompatActivity {
+public class HourlyForecast extends Activity {
 
     private Hour[] mHours;
 
