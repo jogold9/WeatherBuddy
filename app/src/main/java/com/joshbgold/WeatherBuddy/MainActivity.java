@@ -55,10 +55,6 @@ public class MainActivity extends Activity {
     private Forecast mForecast;
     private Current mCurrentWeather;
     private Day[] mDailyWeather;
-    private double longitude;
-    private double latitude;
-    private double mLatitudeDouble;
-    private double mLongitudeDouble;
     private double cityLatitude;
     private double cityLongitude;
     private String userInputCity;  //city that the user has typed in
@@ -83,6 +79,8 @@ public class MainActivity extends Activity {
     ImageView mIconImageView;
     @InjectView(R.id.refreshImageView)
     ImageView mRefreshImageView;
+    @InjectView(R.id.cities_icon)
+    ImageView citiesButton;
     @InjectView(R.id.progressBar)
     ProgressBar mProgressBar;
     @InjectView(R.id.windValue)
@@ -145,6 +143,15 @@ public class MainActivity extends Activity {
             }
         });
 
+        //open CityChooserActivity page to select a city from your saved list of cities
+        citiesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CityChooserActivity.class);
+                startActivity(intent);
+            }
+        });
+
         //refreshes the current forecast
         mRefreshImageView.setOnClickListener(new View.OnClickListener() {
             boolean isValidCity = true;  //used to tell if this is a location worth saving
@@ -194,16 +201,6 @@ public class MainActivity extends Activity {
 
         savePrefs("userInputCity", userInputCity);
 
-    }
-
-    private double getLatitudeDouble() {
-        mLatitudeDouble = 45.523375; //Portland, OR
-        return mLatitudeDouble;
-    }
-
-    private double getLongitudeDouble() {
-        mLongitudeDouble = -122.676201;  //Portland, OR
-        return mLongitudeDouble;
     }
 
     private void getForecast(double latitude, double longitude) {

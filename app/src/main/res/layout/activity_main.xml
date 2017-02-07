@@ -352,7 +352,15 @@
             android:layout_height="match_parent"
             android:id="@+id/refreshImageView"
             android:src="@drawable/refresh"
+            android:layout_weight="1"
             android:contentDescription="@string/refreshString"/>
+
+        <ImageView
+            android:layout_width="92dp"
+            android:layout_height="match_parent"
+            android:id="@+id/cities_icon"
+            android:src="@mipmap/cities_icon"
+            android:layout_weight="1"/>
 
         <ProgressBar
             android:layout_width="wrap_content"
