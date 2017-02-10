@@ -164,6 +164,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 userInputCity = mLocationLabel.getText().toString().toLowerCase();
+                //AddInputCity(userInputCity); //this looks to be a duplicate
 
                 //hide the keyboard
                 mInputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -199,7 +200,7 @@ public class MainActivity extends Activity {
             }
         }
 
-        if (hasDuplicate == false){
+        if (!hasDuplicate){
             citiesList.add(userInputCity);
         }
     }

@@ -34,6 +34,7 @@ public class CityChooserActivity extends Activity {
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT
         );
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         layout.addView(radioGroup, layoutParams);
 
         RadioButton radioButtonView[] = new RadioButton[10];
@@ -46,6 +47,7 @@ public class CityChooserActivity extends Activity {
         for (int i = 0; i < citiesList.size() && i < 10; i++) {
             radioButtonView[i] = new RadioButton(this);
             radioButtonView[i].setText(citiesList.get(i).toString());
+            radioButtonView[i].setTextSize(36);
             radioButtonView[i].setTextColor(ContextCompat.getColor(CityChooserActivity.this, R.color.white));
             radioButtonView[i].setOnClickListener(radioButtonClickListener);
             /*radioButtonView[i].setId(i); //sets integer as ID for the radio button*/
