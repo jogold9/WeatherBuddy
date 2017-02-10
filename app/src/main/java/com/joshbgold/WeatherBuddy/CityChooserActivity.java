@@ -1,6 +1,7 @@
 package com.joshbgold.WeatherBuddy;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -42,16 +43,28 @@ public class CityChooserActivity extends Activity {
             Toast.makeText(CityChooserActivity.this, "City: " + citiesList.get(i), Toast.LENGTH_LONG).show();
         }*/
 
-        for (int i = 0; i < citiesList.size() && i < 5; i++) {
+        for (int i = 0; i < citiesList.size() && i < 10; i++) {
             radioButtonView[i] = new RadioButton(this);
             radioButtonView[i].setText(citiesList.get(i).toString());
             radioButtonView[i].setTextColor(ContextCompat.getColor(CityChooserActivity.this, R.color.white));
+            radioButtonView[i].setOnClickListener(radioButtonClickListener);
             /*radioButtonView[i].setId(i); //sets integer as ID for the radio button*/
             radioGroup.addView(radioButtonView[i], layoutParams);
         }
 
         setBackgroundImage();
     }
+
+    private View.OnClickListener radioButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String radioButtonName = ((RadioButton) view).getText().toString();
+            //Toast.makeText(CityChooserActivity.this, "This radio button is named: " + radioButtonName, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(CityChooserActivity.this, MainActivity.class);
+            intent.putExtra("radioButtonCity", radioButtonName);
+            startActivity(intent);
+        }
+    };
 
     private void setBackgroundImage() {
         String weatherBackground = LoadPreferences("backgroundKey", "cloudy");

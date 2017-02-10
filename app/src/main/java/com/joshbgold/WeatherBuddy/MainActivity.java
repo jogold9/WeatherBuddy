@@ -37,8 +37,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -82,8 +80,6 @@ public class MainActivity extends Activity {
     ImageView mRefreshImageView;
     @InjectView(R.id.cities_icon)
     ImageView citiesButton;
-   /* @InjectView(R.id.progressBar)
-    ProgressBar mProgressBar;*/
     @InjectView(R.id.windValue)
     TextView mWindValue;
     @InjectView(R.id.highTempValue)
@@ -111,6 +107,12 @@ public class MainActivity extends Activity {
 
         userInputCity = loadPrefs("userInputCity", "Portland");
         mLocationLabel.setText(userInputCity);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null){
+            userInputCity = extras.getString("radioButtonCity");
+            mLocationLabel.setText(userInputCity);
+        }
 
         //hide the keyboard
         mInputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
