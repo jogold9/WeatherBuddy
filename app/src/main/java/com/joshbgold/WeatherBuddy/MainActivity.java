@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -50,14 +51,14 @@ public class MainActivity extends Activity {
     public static final String HOURLY_FORECAST = "HOURLY_FORECAST";
     public static final String DAILY_FORECAST = "DAILY_FORECAST";
 
-    private HashMap<String, String> city;
-    private ArrayList<HashMap<String, String>> citiesList = new ArrayList<>();
+    protected static ArrayList citiesList = new ArrayList();
     private Forecast mForecast;
     private Current mCurrentWeather;
     private Day[] mDailyWeather;
     private double cityLatitude;
     private double cityLongitude;
     private String userInputCity;  //city that the user has typed in
+    private boolean hasDuplicate = false;
 
     @InjectView(R.id.extendedForecast)
     ImageView extendedForecastButton;
@@ -81,8 +82,8 @@ public class MainActivity extends Activity {
     ImageView mRefreshImageView;
     @InjectView(R.id.cities_icon)
     ImageView citiesButton;
-    @InjectView(R.id.progressBar)
-    ProgressBar mProgressBar;
+   /* @InjectView(R.id.progressBar)
+    ProgressBar mProgressBar;*/
     @InjectView(R.id.windValue)
     TextView mWindValue;
     @InjectView(R.id.highTempValue)
@@ -106,7 +107,7 @@ public class MainActivity extends Activity {
 
         final InputMethodManager mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        mProgressBar.setVisibility(View.INVISIBLE);
+     /*   mProgressBar.setVisibility(View.INVISIBLE);*/
 
         userInputCity = loadPrefs("userInputCity", "Portland");
         mLocationLabel.setText(userInputCity);
@@ -114,9 +115,11 @@ public class MainActivity extends Activity {
         //hide the keyboard
         mInputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
+        //look up city lat a& long, get forecast, add to arraylist if not a duplicate entry
         try {
             getCoordinatesForCity(userInputCity);
             getForecast(cityLatitude, cityLongitude);
+            AddInputCity(userInputCity);
         } catch (IOException e) {
             Toast.makeText(MainActivity.this, "Could not find this city name.  Make sure you have a network connection, " +
                     "and verify spelling of the city name.", Toast.LENGTH_LONG).show();
@@ -175,10 +178,9 @@ public class MainActivity extends Activity {
 
                if (isValidCity) {
                    WordUtils.capitalize(userInputCity);
-                   //store the city in hashmap for later use, and store the city in preferences
-                   city = new HashMap<>();
-                   city.put("location", userInputCity);
-                   citiesList.add(city);
+                   //store the city for later use in arraylist and in preferences
+                   AddInputCity(userInputCity);
+
                    savePrefs("userInputCity", userInputCity);
                }
 
@@ -186,6 +188,18 @@ public class MainActivity extends Activity {
         });
 
         extendedForecastButton.setOnClickListener(extendedForecast);
+    }
+
+    private void AddInputCity(String userInputCity) {
+        for (int i = 0; i < citiesList.size(); i++){
+        if (citiesList.get(i).equals(userInputCity)){
+                hasDuplicate = true;
+            }
+        }
+
+        if (hasDuplicate == false){
+            citiesList.add(userInputCity);
+        }
     }
 
 
@@ -270,17 +284,17 @@ public class MainActivity extends Activity {
     }
 
     private void toggleRefresh() {
-        if (mProgressBar.getVisibility() == View.INVISIBLE) {
+       /* if (mProgressBar.getVisibility() == View.INVISIBLE) {
             mProgressBar.setVisibility(View.VISIBLE);
             mRefreshImageView.setVisibility(View.INVISIBLE);
         } else {
             mProgressBar.setVisibility(View.INVISIBLE);
             mRefreshImageView.setVisibility(View.VISIBLE);
-        }
+        }*/
     }
 
     private void updateDisplay() {
-        Current current = mForecast.getCurrent();
+     /*   Current current = mForecast.getCurrent();*/
 
         mTemperatureLabel.setText(mCurrentWeather.getTemperature() + "");
         mTimeLabel.setText("At " + mCurrentWeather.getFormattedTime() + " it is");

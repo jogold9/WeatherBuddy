@@ -334,7 +334,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/hourlyButton"
-            android:src="@drawable/hourly"
+            android:src="@mipmap/hourly"
             android:layout_weight="1"
             />
 
@@ -342,30 +342,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/extendedForecast"
-            android:src="@drawable/extended_forecast"
+            android:src="@mipmap/eight_day"
             android:layout_weight="1"
             android:scaleType="fitCenter"
            />
 
         <ImageView
-            android:layout_width="92dp"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/refreshImageView"
-            android:src="@drawable/refresh"
+            android:src="@mipmap/refresh"
             android:layout_weight="1"
             android:contentDescription="@string/refreshString"/>
 
         <ImageView
-            android:layout_width="92dp"
-            android:layout_height="match_parent"
-            android:id="@+id/cities_icon"
-            android:src="@mipmap/cities_icon"
-            android:layout_weight="1"/>
-
-        <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/progressBar"
+            android:id="@+id/cities_icon"
+            android:src="@mipmap/cities_icon"
             android:layout_weight="1"/>
 
     </LinearLayout>

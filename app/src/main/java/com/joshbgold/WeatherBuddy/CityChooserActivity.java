@@ -4,16 +4,52 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import static com.joshbgold.WeatherBuddy.MainActivity.citiesList;
 
 /**
  * Created by JoshG on 2/4/2016.
  */
 public class CityChooserActivity extends Activity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.city_chooser);
+        setBackgroundImage();
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.city_chooser_layout);
+        RadioGroup radioGroup = new RadioGroup(this);
+
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+        layout.addView(radioGroup, layoutParams);
+
+        RadioButton radioButtonView[] = new RadioButton[10];
+
+        // for testing to see what cities are in the cities list
+     /*   for (int i = 0; i < citiesList.size() && i < 5; i++) {
+            Toast.makeText(CityChooserActivity.this, "City: " + citiesList.get(i), Toast.LENGTH_LONG).show();
+        }*/
+
+        for (int i = 0; i < citiesList.size() && i < 5; i++) {
+            radioButtonView[i] = new RadioButton(this);
+            radioButtonView[i].setText(citiesList.get(i).toString());
+            radioButtonView[i].setTextColor(ContextCompat.getColor(CityChooserActivity.this, R.color.white));
+            /*radioButtonView[i].setId(i); //sets integer as ID for the radio button*/
+            radioGroup.addView(radioButtonView[i], layoutParams);
+        }
+
         setBackgroundImage();
     }
 
@@ -59,7 +95,7 @@ public class CityChooserActivity extends Activity {
     }
 
     //get prefs
-    private String LoadPreferences(String key, String value){
+    private String LoadPreferences(String key, String value) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         return sharedPreferences.getString(key, value);
     }
