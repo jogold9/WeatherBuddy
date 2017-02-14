@@ -56,7 +56,6 @@ public class MainActivity extends Activity {
     private double cityLatitude;
     private double cityLongitude;
     private String userInputCity;  //city that the user has typed in
-    private boolean hasDuplicate = false;
 
     @InjectView(R.id.extendedForecast)
     ImageView extendedForecastButton;
@@ -103,13 +102,15 @@ public class MainActivity extends Activity {
 
         final InputMethodManager mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
+        citiesList = loadPrefsArray();
+
      /*   mProgressBar.setVisibility(View.INVISIBLE);*/
 
         userInputCity = loadPrefs("userInputCity", "Portland");
         mLocationLabel.setText(userInputCity);
 
         Bundle extras = getIntent().getExtras();
-        if (extras != null){
+        if (extras != null) {
             userInputCity = extras.getString("radioButtonCity");
             mLocationLabel.setText(userInputCity);
         }
@@ -117,7 +118,7 @@ public class MainActivity extends Activity {
         //hide the keyboard
         mInputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
-        //look up city lat a& long, get forecast, add to arraylist if not a duplicate entry
+        //look up city lat a& long, get forecast, add to arrayList if not a duplicate entry
         try {
             getCoordinatesForCity(userInputCity);
             getForecast(cityLatitude, cityLongitude);
@@ -164,7 +165,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 userInputCity = mLocationLabel.getText().toString().toLowerCase();
-                //AddInputCity(userInputCity); //this looks to be a duplicate
+                //AddInputCity(userInputCity); //is this a duplicate add to the add on line 185?
 
                 //hide the keyboard
                 mInputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -179,13 +180,11 @@ public class MainActivity extends Activity {
                     isValidCity = false;
                 }
 
-               if (isValidCity) {
-                   WordUtils.capitalize(userInputCity);
-                   //store the city for later use in arraylist and in preferences
-                   AddInputCity(userInputCity);
-
-                   savePrefs("userInputCity", userInputCity);
-               }
+                if (isValidCity) {
+                    WordUtils.capitalize(userInputCity);
+                    //store the city for later use in arraylist and in preferences
+                    AddInputCity(userInputCity);
+                }
 
             }
         });
@@ -194,30 +193,19 @@ public class MainActivity extends Activity {
     }
 
     private void AddInputCity(String userInputCity) {
-        for (int i = 0; i < citiesList.size(); i++){
-        if (citiesList.get(i).equals(userInputCity)){
-                hasDuplicate = true;
-            }
-        }
-
-        if (!hasDuplicate){
+        if (!citiesList.contains(userInputCity)) {  //this city is not a duplicate
             citiesList.add(userInputCity);
+            savePrefs("userInputCity", userInputCity);
+            savePrefsArray(citiesList);
         }
     }
-
-
-  /*  @Override
-    protected void onResume() {
-        super.onResume();
-        mGoogleApiClient.connect();
-    }*/
 
     @Override
     protected void onPause() {
         super.onPause();
 
         savePrefs("userInputCity", userInputCity);
-
+        savePrefsArray(citiesList);
     }
 
     private void getForecast(double latitude, double longitude) {
@@ -487,18 +475,41 @@ public class MainActivity extends Activity {
         return mDailyWeather;
     }
 
-    //save prefs
+    //save prefs for strings
     public void savePrefs(String key, String value) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, value);
-        editor.commit();
+        editor.apply();
     }
 
-    //get prefs
-    public String loadPrefs(String key, String value){
+    //get prefs for strings
+    public String loadPrefs(String key, String value) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         return sharedPreferences.getString(key, value);
+    }
+
+    //save prefs for string arrays / Arraylists
+    public void savePrefsArray(ArrayList arrayList) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("array_size", arrayList.size());
+        for (int i = 0; i < arrayList.size(); i++)
+            editor.putString("array_" + i, arrayList.get(i).toString());
+        editor.apply();
+    }
+
+    //get prefs for string array / Arraylists
+    public ArrayList<String> loadPrefsArray() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        ArrayList<String> arrayList = new ArrayList<String>(10);
+        String temporaryCitiesString = "";
+        int size = sharedPreferences.getInt("array_size", 0);
+        for (int i = 0; i < size; i++) {
+            temporaryCitiesString = (sharedPreferences.getString("array_" + i, null));
+            arrayList.add(temporaryCitiesString);
+        }
+        return arrayList;
     }
 
     public void getCoordinatesForCity(String cityString) throws IOException {
@@ -506,7 +517,7 @@ public class MainActivity extends Activity {
 
         List<Address> addressList = geocoder.getFromLocationName(cityString, 1);
 
-        if(addressList != null && addressList.size() > 0) {
+        if (addressList != null && addressList.size() > 0) {
             Address address = addressList.get(0);
             cityLatitude = address.getLatitude();
             cityLongitude = address.getLongitude();
