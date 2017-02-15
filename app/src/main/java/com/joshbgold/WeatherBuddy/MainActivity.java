@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -19,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -112,6 +113,11 @@ public class MainActivity extends Activity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             userInputCity = extras.getString("radioButtonCity");
+            mLocationLabel.setText(userInputCity);
+        }
+
+        if (userInputCity == null) {
+            userInputCity = "Portland";
             mLocationLabel.setText(userInputCity);
         }
 
@@ -513,12 +519,29 @@ public class MainActivity extends Activity {
     }
 
     public void getCoordinatesForCity(String cityString) throws IOException {
+        String errorMessage = "";
         Geocoder geocoder = new Geocoder(this);
+        List<Address> addressList = null;
+        Address address = null;
 
-        List<Address> addressList = geocoder.getFromLocationName(cityString, 1);
+        try {
+            addressList = geocoder.getFromLocationName(cityString, 1);
 
-        if (addressList != null && addressList.size() > 0) {
-            Address address = addressList.get(0);
+        } catch (IOException ioException) {
+            // Catch network or other I/O problems.
+            errorMessage = getString(R.string.service_not_available);
+            Log.e(TAG, errorMessage, ioException);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            // Catch invalid latitude or longitude values.
+            errorMessage = getString(R.string.invalid_lat_long_used);
+            Log.e(TAG, errorMessage, illegalArgumentException);
+        }
+        // Handle case where no address was found.
+        if (addressList == null || addressList.size() == 0) {
+            errorMessage = getString(R.string.no_address_found);
+            Log.e(TAG, errorMessage);
+        } else {
+            address = addressList.get(0);
             cityLatitude = address.getLatitude();
             cityLongitude = address.getLongitude();
         }
