@@ -9,4 +9,7 @@
     <string name="no_daily_forecast_data">no_daily_forecast_data</string>
     <string name="refreshString">refresh forecast button</string>
     <string name="cities">cities</string>
+    <string name="service_not_available">Service not available</string>
+    <string name="invalid_lat_long_used">Invalid latitude and / or longitude used.</string>
+    <string name="no_address_found">Location not found.</string>
 </resources>

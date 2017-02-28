@@ -7,14 +7,15 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import butterknife.InjectView;
+import butterknife.ButterKnife;
 
 import static com.joshbgold.WeatherBuddy.MainActivity.citiesList;
 
@@ -23,34 +24,33 @@ import static com.joshbgold.WeatherBuddy.MainActivity.citiesList;
  */
 public class CityChooserActivity extends Activity {
 
-    //private RadioButton citiesRadioButtons;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.city_chooser);
+        ImageView clear_button = (ImageView) findViewById(R.id.clear_button);
+        clear_button.setOnClickListener(clearButtonClickListener);
+
         setBackgroundImage();
 
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.city_chooser_layout);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.city_chooser_layout);
         RadioGroup radioGroup = new RadioGroup(this);
 
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+        //layoutParams.addRule(LinearLayout.CENTER_IN_PARENT);
         layout.addView(radioGroup, layoutParams);
-
-        //citiesRadioButtons = (RadioButton) findViewById(R.id.ic_radio_button);
 
         RadioButton radioButtonView[] = new RadioButton[10];
 
         // for testing to see what cities are in the cities list
-   /*     for (int i = 0; i < citiesList.size(); i++) {
+        /*for (int i = 0; i < citiesList.size(); i++) {
             Toast.makeText(CityChooserActivity.this, "City: " + citiesList.get(i), Toast.LENGTH_SHORT).show();
         }*/
 
-        citiesList = loadPrefsArray();
+        //citiesList = loadPrefsArray();
 
         for (int i = 0; i < citiesList.size() && i < 10; i++) {
             radioButtonView[i] = new RadioButton(this);
@@ -59,12 +59,32 @@ public class CityChooserActivity extends Activity {
             radioButtonView[i].setTextColor(ContextCompat.getColor(CityChooserActivity.this, R.color.white));
             radioButtonView[i].setButtonDrawable(R.drawable.ic_radio_button);
             radioButtonView[i].setOnClickListener(radioButtonClickListener);
-            /*radioButtonView[i].setId(i); //sets integer as ID for the radio button*/
             radioGroup.addView(radioButtonView[i], layoutParams);
         }
 
+        layout.removeAllViews();
+        layout.addView(clear_button);
+        layout.addView(radioGroup, layoutParams);
+
         setBackgroundImage();
+
     }
+
+   private View.OnClickListener clearButtonClickListener = (new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            //remove last city in citiesList from the array
+            citiesList.remove(citiesList.size() - 1);
+
+            //save new citiesList to prefs
+            savePrefsArray(citiesList);
+
+            //redraw the screen by restarting the CityChooserActivity
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+        }
+    });
 
     private View.OnClickListener radioButtonClickListener = new View.OnClickListener() {
         @Override
@@ -72,6 +92,7 @@ public class CityChooserActivity extends Activity {
             String radioButtonName = ((RadioButton) view).getText().toString();
             //Toast.makeText(CityChooserActivity.this, "This radio button is named: " + radioButtonName, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(CityChooserActivity.this, MainActivity.class);
+           // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.putExtra("radioButtonCity", radioButtonName);
             startActivity(intent);
         }
@@ -79,7 +100,7 @@ public class CityChooserActivity extends Activity {
 
     private void setBackgroundImage() {
         String weatherBackground = LoadPreferences("backgroundKey", "cloudy");
-        RelativeLayout mLayout = (RelativeLayout) findViewById(R.id.city_chooser_layout);
+        LinearLayout mLayout = (LinearLayout) findViewById(R.id.city_chooser_layout);
 
         switch (weatherBackground) {
             case "clear-day":
@@ -137,5 +158,14 @@ public class CityChooserActivity extends Activity {
         return arrayList;
     }
 
+    //save prefs for string arrays / Arraylists
+    public void savePrefsArray(ArrayList arrayList) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("array_size", arrayList.size());
+        for (int i = 0; i < arrayList.size(); i++)
+            editor.putString("array_" + i, arrayList.get(i).toString());
+        editor.apply();
+    }
 
 }
