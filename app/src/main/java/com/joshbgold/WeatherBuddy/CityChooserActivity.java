@@ -92,7 +92,7 @@ public class CityChooserActivity extends Activity {
             String radioButtonName = ((RadioButton) view).getText().toString();
             //Toast.makeText(CityChooserActivity.this, "This radio button is named: " + radioButtonName, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(CityChooserActivity.this, MainActivity.class);
-           // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("radioButtonCity", radioButtonName);
             startActivity(intent);
         }
